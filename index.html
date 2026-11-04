@@ -3,338 +3,289 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>활동 1 - '좋아요 흡혈귀'의 가짜 가면 해부하기</title>
+  <title>'좋아요 흡혈귀'의 가짜 가면 해부하기</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Pretendard', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f1f5f9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+    body { font-family: 'Pretendard', sans-serif; background-color: #E6F3FF; }
+    .canvas-container { position: relative; width: 100%; max-width: 500px; aspect-ratio: 1/1; }
+    canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; }
+    #bg-canvas { z-index: 1; }
+    #draw-canvas { z-index: 2; }
+    input[type="text"] {
+      width: 100%; padding: 8px 12px; margin-top: 4px; margin-bottom: 12px;
+      border: 1px solid #ccc; border-radius: 6px; outline: none;
     }
-    
-    /* 16:9 비율 유지 컨테이너 */
-    .aspect-16-9-container {
-      width: 100%;
-      max-width: 1440px;
-      aspect-ratio: 16 / 9;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    }
-
-    /* 드로잉 캔버스 관련 */
-    #drawing-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 10;
-      cursor: crosshair;
-      touch-action: none; /* 모바일에서 캔버스 터치 시 스크롤 방지 */
-    }
-
-    /* SVG 배경 */
-    #mask-svg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 5;
-      pointer-events: none;
-    }
-
-    /* 스크롤바 커스텀 (입력창용) */
-    textarea::-webkit-scrollbar { width: 6px; }
-    textarea::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    input[type="text"]:focus { border-color: #3B82F6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+    /* 기본 색상 버튼 호버 효과 */
+    .color-swatch:hover { transform: scale(1.1); transition: transform 0.1s; }
   </style>
 </head>
-<body class="p-4 sm:p-8">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-  <!-- 전체 16:9 활동지 영역 -->
-  <main class="aspect-16-9-container bg-gradient-to-br from-sky-100 via-blue-50 to-white rounded-2xl sm:rounded-[2rem] overflow-hidden flex flex-col md:flex-row border border-sky-200">
+  <div class="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row" style="aspect-ratio: 16/9;">
     
-    <!-- 왼쪽: 활동 설명 및 질문 입력 영역 -->
-    <div class="w-full md:w-5/12 h-full p-8 md:p-12 flex flex-col justify-start border-r border-sky-200/60 overflow-y-auto">
-      
-      <!-- 헤더 -->
-      <div class="mb-6">
-        <h2 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tight flex flex-col gap-2">
-          <span class="text-xl md:text-2xl text-sky-600 font-bold">활동 1</span>
-          '좋아요 흡혈귀'의 가짜 가면 해부하기
-        </h2>
-        <p class="mt-4 text-slate-700 font-medium leading-relaxed break-keep">
-          최근 일주일 동안 디지털 기기를 사용하면서 기분이 가라앉거나 자존감이 떨어졌던 경험을 떠올려 봅니다. 아래 질문에 솔직하게 답한 후 우측 가면에 색칠해보세요.
-        </p>
-      </div>
+    <!-- 좌측: 질문 영역 -->
+    <div class="flex-1 p-8 md:p-12 flex flex-col justify-center bg-blue-50/50">
+      <h1 class="text-3xl font-extrabold text-slate-800 mb-2">활동 1</h1>
+      <h2 class="text-xl font-bold text-slate-600 mb-6">'좋아요 흡혈귀'의 가짜 가면 해부하기</h2>
+      <p class="text-slate-700 leading-relaxed mb-8">
+        최근 일주일 동안 디지털 기기를 사용하면서 기분이 가라앉거나 자존감이 떨어졌던 경험을 떠올려 봅니다.<br>
+        아래 질문에 솔직하게 답한 후 가면에 색칠해보세요.
+      </p>
 
-      <!-- 질문 리스트 -->
-      <div class="flex flex-col gap-4 flex-1">
-        <!-- Q1 -->
-        <div class="flex flex-col gap-1.5">
-          <label class="font-bold text-slate-800 text-sm md:text-base flex gap-1.5">
-            <span class="text-sky-500">①</span> 언제 그랬나요?
-          </label>
-          <input type="text" placeholder="(예: 학원 끝나고 밤에 침대에 누웠을 때)" class="w-full bg-white/60 border border-sky-200 focus:border-sky-400 focus:ring-2 focus:ring-sky-200 outline-none rounded-xl px-4 py-2.5 text-sm transition-all shadow-sm">
+      <div class="space-y-2 text-sm font-semibold text-slate-800">
+        <div>
+          <label for="q1">① 언제 그랬나요? (예: 학원 끝나고 밤에 침대에 누웠을 때)</label>
+          <input type="text" id="q1" placeholder="답변을 입력하세요">
         </div>
-
-        <!-- Q2 -->
-        <div class="flex flex-col gap-1.5">
-          <label class="font-bold text-slate-800 text-sm md:text-base flex gap-1.5">
-            <span class="text-sky-500">②</span> 어떤 어플(앱)이었나요?
-          </label>
-          <input type="text" placeholder="(예: 인스타그램 릴스, 친구 부계정 스토리)" class="w-full bg-white/60 border border-sky-200 focus:border-sky-400 focus:ring-2 focus:ring-sky-200 outline-none rounded-xl px-4 py-2.5 text-sm transition-all shadow-sm">
+        <div>
+          <label for="q2">② 어떤 어플(앱)이었나요? (예: 인스타그램 릴스, 친구 부계정 스토리)</label>
+          <input type="text" id="q2" placeholder="답변을 입력하세요">
         </div>
-
-        <!-- Q3 -->
-        <div class="flex flex-col gap-1.5">
-          <label class="font-bold text-slate-800 text-sm md:text-base flex gap-1.5 break-keep">
-            <span class="text-sky-500">③</span> 어떤 댓글이나 피드백, 혹은 영상 때문이었나요?
-          </label>
-          <textarea rows="2" placeholder="(예: 나만 빼고 재미있게 놀았다는 단톡방 대화 / 친구의 화려한 생일파티 사진과 수많은 하트 개수)" class="w-full bg-white/60 border border-sky-200 focus:border-sky-400 focus:ring-2 focus:ring-sky-200 outline-none rounded-xl px-4 py-2.5 text-sm transition-all shadow-sm resize-none"></textarea>
+        <div>
+          <label for="q3">③ 어떤 댓글이나 피드백, 혹은 영상 때문이었나요?</label>
+          <input type="text" id="q3" placeholder="답변을 입력하세요">
         </div>
-
-        <!-- Q4 -->
-        <div class="flex flex-col gap-1.5 h-full">
-          <label class="font-bold text-slate-800 text-sm md:text-base flex gap-1.5 break-keep">
-            <span class="text-sky-500">④</span> 내가 온라인 공간에서 무심코 마주한 반응이 내 현실의 기분을 어떻게 흔들어 놓았나요?
-          </label>
-          <textarea placeholder="솔직한 나의 감정과 기분을 적어보세요." class="w-full h-full min-h-[80px] bg-white/60 border border-sky-200 focus:border-sky-400 focus:ring-2 focus:ring-sky-200 outline-none rounded-xl px-4 py-2.5 text-sm transition-all shadow-sm resize-none"></textarea>
+        <div>
+          <label for="q4">④ 내가 온라인 공간에서 무심코 마주한 반응이 내 현실의 기분을 어떻게 흔들어 놓았나요?</label>
+          <input type="text" id="q4" placeholder="답변을 입력하세요">
         </div>
       </div>
+
+      <!-- 제출 버튼 문구 수정 -->
+      <button id="submit-btn" class="mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md active:scale-95">
+        제출
+      </button>
     </div>
 
-    <!-- 오른쪽: 인터랙티브 드로잉 가면 영역 -->
-    <div class="w-full md:w-7/12 h-full flex flex-col relative bg-white">
+    <!-- 우측: 그리기 영역 -->
+    <div class="flex-1 p-8 flex flex-col items-center justify-center border-l border-slate-100">
       
-      <!-- 상단 툴바 -->
-      <div class="absolute top-4 left-0 w-full px-6 z-20 flex justify-between items-center pointer-events-none">
-        <!-- 색상 팔레트 -->
-        <div class="bg-white/90 backdrop-blur-sm border border-slate-200 shadow-md rounded-2xl p-2 flex gap-1.5 pointer-events-auto items-center">
-          <div class="text-xs font-bold text-slate-400 mr-1 px-1">색상</div>
-          <!-- 화려한 색상 (왼쪽용) -->
-          <button class="color-btn w-6 h-6 rounded-full bg-[#fca5a5] ring-2 ring-offset-1 ring-slate-300 transition-transform hover:scale-110 active" data-color="#fca5a5" title="화사한 핑크"></button>
-          <button class="color-btn w-6 h-6 rounded-full bg-[#fde047] hover:scale-110 transition-transform" data-color="#fde047" title="밝은 노랑"></button>
-          <button class="color-btn w-6 h-6 rounded-full bg-[#60a5fa] hover:scale-110 transition-transform" data-color="#60a5fa" title="시원한 파랑"></button>
-          <button class="color-btn w-6 h-6 rounded-full bg-[#34d399] hover:scale-110 transition-transform" data-color="#34d399" title="선명한 초록"></button>
-          <div class="w-px h-5 bg-slate-300 mx-1"></div>
-          <!-- 어두운 상처 색상 (오른쪽용) -->
-          <button class="color-btn w-6 h-6 rounded-full bg-[#475569] hover:scale-110 transition-transform" data-color="#475569" title="탁한 회색"></button>
-          <button class="color-btn w-6 h-6 rounded-full bg-[#312e81] hover:scale-110 transition-transform" data-color="#312e81" title="멍든 남색"></button>
-          <button class="color-btn w-6 h-6 rounded-full bg-[#581c87] hover:scale-110 transition-transform" data-color="#581c87" title="상처난 보라"></button>
-          <button class="color-btn w-6 h-6 rounded-full bg-[#000000] hover:scale-110 transition-transform" data-color="#000000" title="검정"></button>
-        </div>
-
-        <!-- 펜 & 지우개 & 초기화 도구 -->
-        <div class="bg-white/90 backdrop-blur-sm border border-slate-200 shadow-md rounded-2xl p-2 flex gap-3 pointer-events-auto items-center">
-          <div class="flex items-center gap-2 border-r pr-3">
-            <i class="ph-bold ph-pencil-simple text-slate-500"></i>
-            <input type="range" id="brush-size" min="1" max="20" value="5" class="w-20 accent-sky-500">
-          </div>
-          <button id="eraser-btn" class="flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">
-            <i class="ph-bold ph-eraser"></i> 지우개
-          </button>
-          <button id="clear-btn" class="flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-bold text-rose-500 hover:bg-rose-50 transition-colors">
-            <i class="ph-bold ph-trash"></i> 전체 지우기
-          </button>
-        </div>
-      </div>
-
-      <!-- 캔버스 및 배경 래퍼 -->
-      <div class="relative w-full flex-1 overflow-hidden flex items-center justify-center pt-16 pb-24">
+      <!-- 그리기 도구 패널 -->
+      <div class="flex flex-wrap gap-3 mb-6 bg-slate-100 p-3 rounded-2xl shadow-inner items-center w-full justify-between">
         
-        <!-- 중앙 정렬을 위한 이너 컨테이너 -->
-        <div class="relative w-[90%] max-w-[700px] aspect-[4/3]" id="canvas-container">
-          
-          <!-- 배경 SVG (점선 가면) -->
-          <svg id="mask-svg" viewBox="0 0 500 400" preserveAspectRatio="xMidYMid meet">
-            <!-- 중앙 점선 -->
-            <line x1="250" y1="20" x2="250" y2="380" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,6"/>
-            
-            <!-- 얼굴 윤곽선 (좌/우) -->
-            <path d="M 250 40 C 380 40, 420 180, 380 290 C 350 370, 250 380, 250 380 C 250 380, 150 370, 120 290 C 80 180, 120 40, 250 40 Z" fill="none" stroke="#cbd5e1" stroke-width="3"/>
-            
-            <!-- 귀 윤곽선 -->
-            <path d="M 125 180 C 100 170, 90 220, 110 240" fill="none" stroke="#cbd5e1" stroke-width="3"/>
-            <path d="M 375 180 C 400 170, 410 220, 390 240" fill="none" stroke="#cbd5e1" stroke-width="3"/>
+        <!-- 기본 색상 팔레트 추가 -->
+        <div class="flex gap-1.5 items-center border-r border-slate-300 pr-3">
+          <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #000000;" data-color="#000000" title="검정"></button>
+          <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #EF4444;" data-color="#EF4444" title="빨강"></button>
+          <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #F59E0B;" data-color="#F59E0B" title="주황"></button>
+          <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #EAB308;" data-color="#EAB308" title="노랑"></button>
+          <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #22C55E;" data-color="#22C55E" title="초록"></button>
+          <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #3B82F6;" data-color="#3B82F6" title="파랑"></button>
+          <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #A855F7;" data-color="#A855F7" title="보라"></button>
+          <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #FFFFFF;" data-color="#FFFFFF" title="하양"></button>
+        </div>
 
-            <!-- 눈 위치 가이드 (점선) -->
-            <ellipse cx="180" cy="180" rx="25" ry="12" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4"/>
-            <ellipse cx="320" cy="180" rx="25" ry="12" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4"/>
-            
-            <!-- 코 가이드 -->
-            <path d="M 250 180 L 250 240 M 235 245 C 245 255, 255 255, 265 245" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4"/>
-            
-            <!-- 입 가이드 -->
-            <path d="M 210 300 C 230 320, 270 320, 290 300" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4"/>
-            
-            <!-- 머리카락 간단 윤곽 가이드 -->
-            <path d="M 160 50 C 140 80, 120 130, 120 180 M 340 50 C 360 80, 380 130, 380 180" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4"/>
-          </svg>
+        <div class="flex gap-2 items-center">
+          <input type="color" id="color-picker" value="#000000" class="w-8 h-8 rounded-full cursor-pointer overflow-hidden border-none p-0" title="사용자 지정 색상">
+          <input type="range" id="brush-size" min="1" max="20" value="5" class="w-20 accent-blue-600">
+        </div>
 
-          <!-- 드로잉 캔버스 -->
-          <canvas id="drawing-canvas"></canvas>
+        <div class="flex gap-2 ml-auto">
+          <button id="eraser-btn" class="px-3 py-1.5 bg-white text-slate-700 rounded-lg font-bold shadow-sm text-sm hover:bg-slate-50">지우개</button>
+          <button id="clear-btn" class="px-3 py-1.5 bg-rose-50 text-rose-600 rounded-lg font-bold shadow-sm text-sm hover:bg-rose-100">전체 지우기</button>
         </div>
       </div>
 
+      <!-- 캔버스 컨테이너 -->
+      <div class="canvas-container bg-white shadow-sm border border-slate-200 rounded-2xl overflow-hidden">
+        <canvas id="bg-canvas"></canvas>
+        <canvas id="draw-canvas"></canvas>
+      </div>
     </div>
-  </main>
+  </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const canvas = document.getElementById("drawing-canvas");
-      const ctx = canvas.getContext("2d", { willReadFrequently: true });
-      const container = document.getElementById("canvas-container");
+    // --- 캔버스 및 그리기 설정 ---
+    const bgCanvas = document.getElementById('bg-canvas');
+    const drawCanvas = document.getElementById('draw-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    const drawCtx = drawCanvas.getContext('2d');
+    
+    // 캔버스 크기 맞춤
+    const resizeCanvas = () => {
+      const container = document.querySelector('.canvas-container');
+      const width = container.clientWidth;
+      const height = container.clientHeight;
       
-      let isDrawing = false;
-      let currentColor = "#fca5a5";
-      let currentLineWidth = 5;
-      let isEraser = false;
+      [bgCanvas, drawCanvas].forEach(canvas => {
+        canvas.width = width;
+        canvas.height = height;
+      });
+      drawMaskBase(); // 리사이즈 시 마스크 다시 그리기
+    };
 
-      // 캔버스 크기를 CSS 컨테이너 크기에 맞추어 내부 해상도 설정
-      function resizeCanvas() {
-        const rect = container.getBoundingClientRect();
-        // 고해상도 지원을 위해 기기 픽셀 비율 적용 (선명하게 그리기)
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
+    // 기본 마스크 가이드라인 그리기
+    const drawMaskBase = () => {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      bgCtx.beginPath();
+      // 머리 윤곽
+      bgCtx.ellipse(bgCanvas.width/2, bgCanvas.height/2 - 20, bgCanvas.width/3, bgCanvas.height/2.5, 0, 0, Math.PI * 2);
+      // 중앙 분할선 (점선)
+      bgCtx.setLineDash([5, 5]);
+      bgCtx.moveTo(bgCanvas.width/2, 20);
+      bgCtx.lineTo(bgCanvas.width/2, bgCanvas.height - 20);
+      
+      bgCtx.strokeStyle = '#CBD5E1';
+      bgCtx.lineWidth = 2;
+      bgCtx.stroke();
+      bgCtx.setLineDash([]);
+      
+      // 눈, 코, 입 가이드
+      bgCtx.strokeStyle = '#E2E8F0';
+      bgCtx.strokeRect(bgCanvas.width/2 - 80, bgCanvas.height/2 - 30, 40, 15); // 좌안
+      bgCtx.strokeRect(bgCanvas.width/2 + 40, bgCanvas.height/2 - 30, 40, 15); // 우안
+      bgCtx.beginPath(); bgCtx.arc(bgCanvas.width/2, bgCanvas.height/2 + 30, 10, 0, Math.PI); bgCtx.stroke(); // 코
+      bgCtx.beginPath(); bgCtx.ellipse(bgCanvas.width/2, bgCanvas.height/2 + 80, 30, 10, 0, 0, Math.PI*2); bgCtx.stroke(); // 입
+    };
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // 그리기 로직
+    let isDrawing = false;
+    let currentColor = '#000000';
+    let isEraser = false;
+    let lastX = 0, lastY = 0;
+
+    const startDrawing = (e) => {
+      isDrawing = true;
+      const rect = drawCanvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      lastX = clientX - rect.left;
+      lastY = clientY - rect.top;
+    };
+
+    const draw = (e) => {
+      if (!isDrawing) return;
+      e.preventDefault(); // 터치 스크롤 방지
+      const rect = drawCanvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+
+      drawCtx.beginPath();
+      drawCtx.moveTo(lastX, lastY);
+      drawCtx.lineTo(x, y);
+      
+      drawCtx.lineCap = 'round';
+      drawCtx.lineJoin = 'round';
+      drawCtx.lineWidth = document.getElementById('brush-size').value;
+      
+      if (isEraser) {
+        drawCtx.globalCompositeOperation = 'destination-out';
+        drawCtx.strokeStyle = 'rgba(0,0,0,1)';
+      } else {
+        drawCtx.globalCompositeOperation = 'source-over';
+        drawCtx.strokeStyle = currentColor;
+      }
+      
+      drawCtx.stroke();
+      lastX = x; lastY = y;
+    };
+
+    const stopDrawing = () => isDrawing = false;
+
+    // 이벤트 리스너 (마우스 & 터치)
+    drawCanvas.addEventListener('mousedown', startDrawing);
+    drawCanvas.addEventListener('mousemove', draw);
+    drawCanvas.addEventListener('mouseup', stopDrawing);
+    drawCanvas.addEventListener('mouseout', stopDrawing);
+    
+    drawCanvas.addEventListener('touchstart', startDrawing, {passive: false});
+    drawCanvas.addEventListener('touchmove', draw, {passive: false});
+    drawCanvas.addEventListener('touchend', stopDrawing);
+
+    // --- 도구 설정 (기본 팔레트 포함) ---
+    const colorPicker = document.getElementById('color-picker');
+    const eraserBtn = document.getElementById('eraser-btn');
+    
+    // 기본 색상 버튼 클릭 이벤트
+    document.querySelectorAll('.color-swatch').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const selectedColor = e.target.getAttribute('data-color');
+        currentColor = selectedColor;
+        colorPicker.value = selectedColor; // 색상 선택기 값 동기화
+        isEraser = false;
+        eraserBtn.classList.remove('bg-slate-300');
+      });
+    });
+
+    colorPicker.addEventListener('input', (e) => {
+      currentColor = e.target.value;
+      isEraser = false;
+      eraserBtn.classList.remove('bg-slate-300');
+    });
+    
+    eraserBtn.addEventListener('click', (e) => {
+      isEraser = true;
+      e.target.classList.add('bg-slate-300');
+    });
+    
+    document.getElementById('clear-btn').addEventListener('click', () => {
+      drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+    });
+
+    // --- 데이터 전송(제출) 로직 ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzVWniSRgm7-cw3RRPyz8IDD313t7SgcuUXQ8vdY1pydL_kg3HAzoToQlq0Zxm0ZI/exec";
+
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.innerText = "제출 중...";
+      btn.classList.add('opacity-70');
+
+      // 제출용 이미지 생성 (배경 가이드라인 + 학생 그림 병합)
+      const exportCanvas = document.createElement('canvas');
+      exportCanvas.width = drawCanvas.width;
+      exportCanvas.height = drawCanvas.height;
+      const exportCtx = exportCanvas.getContext('2d');
+      
+      // 하얀 배경 깔기 (투명도 방지)
+      exportCtx.fillStyle = '#FFFFFF';
+      exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+      exportCtx.drawImage(bgCanvas, 0, 0);
+      exportCtx.drawImage(drawCanvas, 0, 0);
+
+      // 페이로드 데이터 구성
+      const payload = {
+        q1: document.getElementById('q1').value,
+        q2: document.getElementById('q2').value,
+        q3: document.getElementById('q3').value,
+        q4: document.getElementById('q4').value,
+        image: exportCanvas.toDataURL('image/png') // Base64 인코딩
+      };
+
+      try {
+        // Apps Script로 POST 전송 (CORS 프리플라이트 우회를 위해 text/plain 사용)
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+          body: JSON.stringify(payload)
+        });
         
-        // CSS 크기는 원래대로
-        canvas.style.width = `${rect.width}px`;
-        canvas.style.height = `${rect.height}px`;
-        
-        // 컨텍스트 스케일 조정
-        ctx.scale(dpr, dpr);
-        
-        // 상태 초기화 방지용 설정 재적용
-        updateContextState();
-      }
-
-      function updateContextState() {
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-      }
-
-      window.addEventListener("resize", resizeCanvas);
-      resizeCanvas(); // 초기 셋팅
-
-      // 좌표 계산 함수 (마우스 및 터치 모두 지원)
-      function getCoordinates(e) {
-        const rect = canvas.getBoundingClientRect();
-        let clientX = e.clientX;
-        let clientY = e.clientY;
-
-        if (e.touches && e.touches.length > 0) {
-          clientX = e.touches[0].clientX;
-          clientY = e.touches[0].clientY;
-        }
-
-        return {
-          x: clientX - rect.left,
-          y: clientY - rect.top
-        };
-      }
-
-      // 그리기 시작
-      function startPosition(e) {
-        isDrawing = true;
-        draw(e);
-      }
-
-      // 그리기 종료
-      function endPosition() {
-        isDrawing = false;
-        ctx.beginPath(); // 경로 초기화 (다음 선이 이전 선과 이어지지 않게)
-      }
-
-      // 그리기 로직
-      function draw(e) {
-        if (!isDrawing) return;
-        if (e.type.includes('touch')) e.preventDefault(); // 스크롤 방지
-
-        const { x, y } = getCoordinates(e);
-
-        ctx.lineWidth = currentLineWidth;
-        
-        if (isEraser) {
-          // 지우개 모드: 그려진 픽셀을 투명하게 만듦
-          ctx.globalCompositeOperation = "destination-out";
-          ctx.strokeStyle = "rgba(0,0,0,1)"; // 색상은 무관
+        const result = await response.json();
+        if(result.status === 'success') {
+          alert('제출이 완료되었습니다.');
+          // 폼 초기화
+          ['q1', 'q2', 'q3', 'q4'].forEach(id => document.getElementById(id).value = '');
+          drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
         } else {
-          // 일반 그리기 모드
-          ctx.globalCompositeOperation = "source-over";
-          ctx.strokeStyle = currentColor;
+          alert('제출 중 오류가 발생했습니다: ' + result.message);
         }
-
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "제출";
+        btn.classList.remove('opacity-70');
       }
-
-      // 이벤트 리스너 등록
-      canvas.addEventListener("mousedown", startPosition);
-      canvas.addEventListener("mouseup", endPosition);
-      canvas.addEventListener("mousemove", draw);
-      canvas.addEventListener("mouseleave", endPosition); // 캔버스 밖으로 나가면 종료
-
-      canvas.addEventListener("touchstart", startPosition, { passive: false });
-      canvas.addEventListener("touchend", endPosition);
-      canvas.addEventListener("touchmove", draw, { passive: false });
-
-      // 도구바 UI 인터랙션
-      const colorBtns = document.querySelectorAll(".color-btn");
-      const eraserBtn = document.getElementById("eraser-btn");
-      const clearBtn = document.getElementById("clear-btn");
-      const brushSize = document.getElementById("brush-size");
-
-      // 색상 변경
-      colorBtns.forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          isEraser = false;
-          currentColor = e.target.dataset.color;
-          
-          // UI 활성화 상태 표시
-          colorBtns.forEach(b => {
-            b.classList.remove("ring-2", "ring-offset-1", "ring-slate-300");
-          });
-          e.target.classList.add("ring-2", "ring-offset-1", "ring-slate-300");
-          
-          eraserBtn.classList.remove("bg-slate-200", "text-slate-800");
-          eraserBtn.classList.add("text-slate-600");
-        });
-      });
-
-      // 브러쉬 크기 변경
-      brushSize.addEventListener("input", (e) => {
-        currentLineWidth = e.target.value;
-      });
-
-      // 지우개 토글
-      eraserBtn.addEventListener("click", () => {
-        isEraser = true;
-        
-        // 색상 버튼 선택 해제
-        colorBtns.forEach(b => {
-          b.classList.remove("ring-2", "ring-offset-1", "ring-slate-300");
-        });
-
-        // 지우개 활성화 UI
-        eraserBtn.classList.remove("text-slate-600");
-        eraserBtn.classList.add("bg-slate-200", "text-slate-800");
-      });
-
-      // 전체 지우기
-      clearBtn.addEventListener("click", () => {
-        // 투명하게 전체 초기화 (배경 SVG는 보호됨)
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      });
     });
   </script>
 </body>
