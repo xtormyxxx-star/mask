@@ -8,7 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Pretendard', sans-serif; background-color: #E6F3FF; }
-    .canvas-container { position: relative; width: 100%; max-width: 500px; aspect-ratio: 1/1; }
+    /* 캔버스 최대 너비를 늘려 가로 공간을 더 차지하게 수정 */
+    .canvas-container { position: relative; width: 100%; max-width: 650px; aspect-ratio: 1/1; }
     canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; }
     #bg-canvas { z-index: 1; }
     #draw-canvas { z-index: 2; }
@@ -17,7 +18,6 @@
       border: 1px solid #ccc; border-radius: 6px; outline: none;
     }
     input[type="text"]:focus { border-color: #3B82F6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
-    /* 기본 색상 버튼 호버 효과 */
     .color-swatch:hover { transform: scale(1.1); transition: transform 0.1s; }
   </style>
 </head>
@@ -25,8 +25,8 @@
 
   <div class="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row md:aspect-video">
     
-    <!-- 좌측: 질문 영역 -->
-    <div class="flex-1 p-8 md:p-12 flex flex-col justify-center bg-blue-50/50">
+    <!-- 좌측: 질문 영역 (비율 축소) -->
+    <div class="w-full md:w-5/12 p-8 md:p-12 flex flex-col justify-center bg-blue-50/50 flex-none">
       <h1 class="text-3xl font-extrabold text-slate-800 mb-2">활동 1</h1>
       <h2 class="text-xl font-bold text-slate-600 mb-6">'좋아요 흡혈귀'의 가짜 가면 해부하기</h2>
       <p class="text-slate-700 leading-relaxed mb-8">
@@ -53,19 +53,17 @@
         </div>
       </div>
 
-      <!-- 제출 버튼 문구 수정 -->
       <button id="submit-btn" class="mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md active:scale-95">
         제출
       </button>
     </div>
 
-    <!-- 우측: 그리기 영역 -->
-    <div class="flex-1 p-8 flex flex-col items-center justify-center border-l border-slate-100">
+    <!-- 우측: 그리기 영역 (비율 확장) -->
+    <div class="w-full md:w-7/12 p-8 flex flex-col items-center justify-center border-l border-slate-100 flex-none">
       
       <!-- 그리기 도구 패널 -->
-      <div class="flex flex-wrap gap-3 mb-6 bg-slate-100 p-3 rounded-2xl shadow-inner items-center w-full justify-between">
+      <div class="flex flex-wrap gap-3 mb-6 bg-slate-100 p-3 rounded-2xl shadow-inner items-center w-full justify-between max-w-[650px]">
         
-        <!-- 기본 색상 팔레트 추가 -->
         <div class="flex gap-1.5 items-center border-r border-slate-300 pr-3">
           <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #000000;" data-color="#000000" title="검정"></button>
           <button class="color-swatch w-7 h-7 rounded-full border border-slate-300 shadow-sm" style="background-color: #EF4444;" data-color="#EF4444" title="빨강"></button>
@@ -97,13 +95,11 @@
   </div>
 
   <script>
-    // --- 캔버스 및 그리기 설정 ---
     const bgCanvas = document.getElementById('bg-canvas');
     const drawCanvas = document.getElementById('draw-canvas');
     const bgCtx = bgCanvas.getContext('2d');
     const drawCtx = drawCanvas.getContext('2d');
     
-    // 캔버스 크기 맞춤
     const resizeCanvas = () => {
       const container = document.querySelector('.canvas-container');
       const width = container.clientWidth;
@@ -113,37 +109,33 @@
         canvas.width = width;
         canvas.height = height;
       });
-      drawMaskBase(); // 리사이즈 시 마스크 다시 그리기
+      drawMaskBase();
     };
 
-    // 기본 마스크 가이드라인 그리기
     const drawMaskBase = () => {
       bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
       bgCtx.beginPath();
-      // 머리 윤곽
-      bgCtx.ellipse(bgCanvas.width/2, bgCanvas.height/2 - 20, bgCanvas.width/3, bgCanvas.height/2.5, 0, 0, Math.PI * 2);
-      // 중앙 분할선 (점선)
+      bgCtx.ellipse(bgCanvas.width/2, bgCanvas.height/2 - 10, bgCanvas.width/2.4, bgCanvas.height/2.2, 0, 0, Math.PI * 2);
+      
       bgCtx.setLineDash([5, 5]);
-      bgCtx.moveTo(bgCanvas.width/2, 20);
-      bgCtx.lineTo(bgCanvas.width/2, bgCanvas.height - 20);
+      bgCtx.moveTo(bgCanvas.width/2, 10);
+      bgCtx.lineTo(bgCanvas.width/2, bgCanvas.height - 10);
       
       bgCtx.strokeStyle = '#CBD5E1';
       bgCtx.lineWidth = 2;
       bgCtx.stroke();
       bgCtx.setLineDash([]);
       
-      // 눈, 코, 입 가이드
       bgCtx.strokeStyle = '#E2E8F0';
-      bgCtx.strokeRect(bgCanvas.width/2 - 80, bgCanvas.height/2 - 30, 40, 15); // 좌안
-      bgCtx.strokeRect(bgCanvas.width/2 + 40, bgCanvas.height/2 - 30, 40, 15); // 우안
-      bgCtx.beginPath(); bgCtx.arc(bgCanvas.width/2, bgCanvas.height/2 + 30, 10, 0, Math.PI); bgCtx.stroke(); // 코
-      bgCtx.beginPath(); bgCtx.ellipse(bgCanvas.width/2, bgCanvas.height/2 + 80, 30, 10, 0, 0, Math.PI*2); bgCtx.stroke(); // 입
+      bgCtx.strokeRect(bgCanvas.width/2 - 100, bgCanvas.height/2 - 40, 50, 20); 
+      bgCtx.strokeRect(bgCanvas.width/2 + 50, bgCanvas.height/2 - 40, 50, 20); 
+      bgCtx.beginPath(); bgCtx.arc(bgCanvas.width/2, bgCanvas.height/2 + 40, 12, 0, Math.PI); bgCtx.stroke(); 
+      bgCtx.beginPath(); bgCtx.ellipse(bgCanvas.width/2, bgCanvas.height/2 + 100, 40, 12, 0, 0, Math.PI*2); bgCtx.stroke(); 
     };
 
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // 그리기 로직
     let isDrawing = false;
     let currentColor = '#000000';
     let isEraser = false;
@@ -160,7 +152,7 @@
 
     const draw = (e) => {
       if (!isDrawing) return;
-      e.preventDefault(); // 터치 스크롤 방지
+      e.preventDefault();
       const rect = drawCanvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -189,7 +181,6 @@
 
     const stopDrawing = () => isDrawing = false;
 
-    // 이벤트 리스너 (마우스 & 터치)
     drawCanvas.addEventListener('mousedown', startDrawing);
     drawCanvas.addEventListener('mousemove', draw);
     drawCanvas.addEventListener('mouseup', stopDrawing);
@@ -199,16 +190,14 @@
     drawCanvas.addEventListener('touchmove', draw, {passive: false});
     drawCanvas.addEventListener('touchend', stopDrawing);
 
-    // --- 도구 설정 (기본 팔레트 포함) ---
     const colorPicker = document.getElementById('color-picker');
     const eraserBtn = document.getElementById('eraser-btn');
     
-    // 기본 색상 버튼 클릭 이벤트
     document.querySelectorAll('.color-swatch').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const selectedColor = e.target.getAttribute('data-color');
         currentColor = selectedColor;
-        colorPicker.value = selectedColor; // 색상 선택기 값 동기화
+        colorPicker.value = selectedColor;
         isEraser = false;
         eraserBtn.classList.remove('bg-slate-300');
       });
@@ -229,7 +218,6 @@
       drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
     });
 
-    // --- 데이터 전송(제출) 로직 ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzVWniSRgm7-cw3RRPyz8IDD313t7SgcuUXQ8vdY1pydL_kg3HAzoToQlq0Zxm0ZI/exec";
 
     document.getElementById('submit-btn').addEventListener('click', async () => {
@@ -238,29 +226,25 @@
       btn.innerText = "제출 중...";
       btn.classList.add('opacity-70');
 
-      // 제출용 이미지 생성 (배경 가이드라인 + 학생 그림 병합)
       const exportCanvas = document.createElement('canvas');
       exportCanvas.width = drawCanvas.width;
       exportCanvas.height = drawCanvas.height;
       const exportCtx = exportCanvas.getContext('2d');
       
-      // 하얀 배경 깔기 (투명도 방지)
       exportCtx.fillStyle = '#FFFFFF';
       exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
       exportCtx.drawImage(bgCanvas, 0, 0);
       exportCtx.drawImage(drawCanvas, 0, 0);
 
-      // 페이로드 데이터 구성
       const payload = {
         q1: document.getElementById('q1').value,
         q2: document.getElementById('q2').value,
         q3: document.getElementById('q3').value,
         q4: document.getElementById('q4').value,
-        image: exportCanvas.toDataURL('image/png') // Base64 인코딩
+        image: exportCanvas.toDataURL('image/png')
       };
 
       try {
-        // Apps Script로 POST 전송 (CORS 프리플라이트 우회를 위해 text/plain 사용)
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
           headers: {
@@ -272,7 +256,6 @@
         const result = await response.json();
         if(result.status === 'success') {
           alert('제출이 완료되었습니다.');
-          // 폼 초기화
           ['q1', 'q2', 'q3', 'q4'].forEach(id => document.getElementById(id).value = '');
           drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
         } else {
